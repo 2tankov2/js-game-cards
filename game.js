@@ -1,6 +1,5 @@
 import { cons, car, cdr, toString as pairToString } from 'hexlet-pairs'; // eslint-disable-line
 import { cons as consList, l, random, head, reverse, toString as listToString } from 'hexlet-pairs-data'; // eslint-disable-line
-import { getName, damage } from './card';
 
 const run = (player1, player2, cards, customRandom) => {
   const iter = (health1, name1, health2, name2, order, log) => {
@@ -9,8 +8,10 @@ const run = (player1, player2, cards, customRandom) => {
       return consList(cons(car(head(log)), `${name1} был убит!`), log);
     }
     const card = customRandom(cards);
-    const cardName = getName(card);
-    const points = damage(card, health2);
+    //BEGIN
+    const cardName = card('getName');
+    const points = card('damage', health2);
+    //END
     const newHealth = health2 - points;
     const message = `Игрок '${name1}' применил '${cardName}' против '${name2}' и нанес урон '${points}'`;
 
