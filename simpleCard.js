@@ -1,11 +1,16 @@
 import { cons, car, cdr, toString as pairToString } from 'hexlet-pairs'; // eslint-disable-line
-import { attach, contents } from './type'; // eslint-disable-line
+import { definer } from './generic'; // eslint-disable-line
+import { attach } from './type'; // eslint-disable-line
 
 // BEGIN (write your solution here)
-export const make = (name, persent) =>
+const defmetod = definer('SimpleCard');
+
+const make = (name, persent) =>
   attach('SimpleCard', cons(name, persent));
 
-export const getName = self => car(contents(self));
+export default make;
 
-export const damage = self => cdr(contents(self));
+defmetod('getName', self => car(self));
+
+defmetod('damage', self => cdr(self));
 // END
