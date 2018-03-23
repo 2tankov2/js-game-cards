@@ -6,13 +6,13 @@ let methods = l();
 
 export const getMethod = (obj, methodName) => {
   // BEGIN (write your solution here)
-  const iter = (typeObj, funcName, table) => {
+  const iter = (table) => {
     if (isEmpty(table)) {
       return null;
-    } if (typeTag(typeObj) === typeTag(head(table)) && funcName === car(contents(head(table)))) {
+    } if (typeTag(obj) === typeTag(head(table)) && methodName === car(contents(head(table)))) {
       return cdr(contents(head(table)));
-    } return iter(typeObj, funcName, tail(table));
-  }; return iter(obj, methodName, methods);
+    } return iter(tail(table));
+  }; return iter(methods);
   // END
 };
 
