@@ -1,39 +1,49 @@
-import { cons, car, cdr, toString as pairToString } from 'hexlet-pairs'; // eslint-disable-line
 import { cons as consList, l, random, head, reverse, toString as listToString } from 'hexlet-pairs-data'; // eslint-disable-line
 
 const run = (player1, player2, cards, customRandom) => {
+  // BEGIN (write your solution here)
   const iter = (health1, name1, health2, name2, order, log) => {
-    // BEGIN (write your solution here)
-    if (health1 <= 0) {
-      return consList(cons(car(head(log)), `${name1} был убит!`), log);
+    if (health1 <= 0 || health2 <= 0) {
+      const getLog = {
+        health1: head(log).health1,
+        health2: head(log).health2,
+        message1: `${name1} был убит`,
+      };
+      return consList(getLog, log);
     }
     const card = customRandom(cards);
-    //BEGIN
-    const cardName = card('getName');
-    const points = card('damage', health2);
-    //END
-    const newHealth = health2 - points;
-    const message = `Игрок '${name1}' применил '${cardName}' против '${name2}' и нанес урон '${points}'`;
+    const cardName = card.name;
 
+    let points;
     let starts;
-    if (order === 1){
-      starts = cons(cons(health1, newHealth), message);
-    } else if (order === 2){
-      starts = cons(cons(newHealth, health1), message);
+    if (order === 1) {
+      points = card.damage(health2);
+      starts = {
+        health1,
+        health2: health2 - points,
+        message: `Игрок '${name1}' применил '${cardName}' против '${name2}' и нанес урон '${points}'`,
+      };
+    } else if (order === 2) {
+      points = card.damage(health1);
+      starts = {
+        health1: health1 - points,
+        health2,
+        message: `Игрок '${name2}' применил '${cardName}' против '${name1}' и нанес урон '${points}'`,
+      };
     }
-
-    const newLog = consList(starts, log);
-    return iter(newHealth, name2, health1, name1, order === 1 ? 2 : 1, newLog);
-    // END
-};
+    return iter(starts.health1, name1, starts.health2, name2, order === 1 ? 2 : 1, consList(starts, log));
+  };
+  // END
 
   const startHealth = 10;
-  const logItem = cons(cons(startHealth, startHealth), 'Начинаем бой!');
+  const logItem = {
+    health1: startHealth,
+    health2: startHealth,
+    message: 'Начинаем бой!',
+  };
   return reverse(iter(startHealth, player1, startHealth, player2, 1, l(logItem)));
 };
 
-// BEGIN (write your solution here)
-export default (cards,customRandom) =>
+export default (cards, customRandom = random) =>
   (name1, name2) =>
     run(name1, name2, cards, customRandom);
-// END
