@@ -1,39 +1,36 @@
 import { cons as consList, l, random, head, reverse, toString as listToString } from 'hexlet-pairs-data'; // eslint-disable-line
 
 const run = (player1, player2, cards, customRandom) => {
-  // BEGIN (write your solution here)
   const iter = (health1, name1, health2, name2, order, log) => {
-    if (health1 <= 0 || health2 <= 0) {
-      const getLog = {
-        health1: head(log).health1,
-        health2: head(log).health2,
-        message1: `${name1} был убит`,
+    if (health1 <= 0) {
+      const prevLog = head(log);
+      const newLog = {
+        message: `${name1} был убит`,
+        health1: prevLog.health1,
+        health2: prevLog.health2,
       };
-      return consList(getLog, log);
+      return consList(newLog, log);
     }
     const card = customRandom(cards);
+    // BEGIN (write your solution here)
     const cardName = card.name;
+    const points = card.damage(health2);
+    // END
+    const newHealth = health2 - points;
 
-    let points;
-    let starts;
+    const message = `Игрок '${name1}' применил '${cardName}'
+      против '${name2}' и нанес урон '${points}'`;
+    const stats = { message };
     if (order === 1) {
-      points = card.damage(health2);
-      starts = {
-        health1,
-        health2: health2 - points,
-        message: `Игрок '${name1}' применил '${cardName}' против '${name2}' и нанес урон '${points}'`,
-      };
+      stats.health1 = health1;
+      stats.health2 = newHealth;
     } else if (order === 2) {
-      points = card.damage(health1);
-      starts = {
-        health1: health1 - points,
-        health2,
-        message: `Игрок '${name2}' применил '${cardName}' против '${name1}' и нанес урон '${points}'`,
-      };
+      stats.health1 = newHealth;
+      stats.health2 = health1;
     }
-    return iter(starts.health1, name1, starts.health2, name2, order === 1 ? 2 : 1, consList(starts, log));
+    const newLog = consList(stats, log);
+    return iter(newHealth, name2, health1, name1, order === 1 ? 2 : 1, newLog);
   };
-  // END
 
   const startHealth = 10;
   const logItem = {
